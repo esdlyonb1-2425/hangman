@@ -3,13 +3,70 @@ let alphabet = "abcdefghijklmnopqrstuvwxyz"
 let alphabetArray = alphabet.split('')
 const words = ["bouteille", "casserole", "fourchette", "spatule", "passoire", "cocorico"]
 const displayedWord = document.querySelector(".displayedWord")
+const victoryDiv = document.querySelector(".victory")
 let secretWord
 let displayedSecretWord
+let mistakenLetters
+let maxErrors = 3
+let errors
+console.log("DEBUT : ", displayedSecretWord)
 
 
 console.log(document.querySelectorAll('.keyButton') )
 
+function checkSecretWordForLetter(letterToFind) {
+    if(!secretWord.includes(letterToFind))
+    {
+        return false
+    }
+    let indexes= []
 
+    let secretWordArray = secretWord.split('')
+
+    for(let i = 1; i < secretWordArray.length -1; i++)
+    {
+        if(secretWordArray[i] === letterToFind)
+        {
+            indexes.push(i)
+        }
+    }
+
+
+    return indexes
+
+}
+
+function playLetter(playedLetter) {
+
+    console.log(playedLetter)
+    let indexes = checkSecretWordForLetter(playedLetter)
+
+    if(!indexes){
+     return wrongLetter(playedLetter)
+
+    }
+
+    return addLetterToWord(playedLetter, indexes)
+
+
+}
+
+function addLetterToWord(letterToAdd, indexes) {
+   let displayedSecretWordArray = displayedSecretWord.split('')
+
+    indexes.forEach(index => {
+        displayedSecretWordArray[index] = letterToAdd
+    })
+
+    console.log("MILIEU : ", displayedSecretWord)
+
+    displayedSecretWord = displayedSecretWordArray.toString().replaceAll(',', '')
+    console.log("FIN : ", displayedSecretWord)
+    displayGameWord()
+    disableUsedLettersFromKeyboard()
+    checkForWinOrLost()
+
+}
 
 function createKeyboard(){
     alphabetArray.forEach((letter) => {
@@ -31,12 +88,17 @@ function createKeyboard(){
         })
     })
 
+    wireKeyButtons()
+
 }
 function initGame() {
+    errors = 0
+    mistakenLetters = []
     createKeyboard()
     pickRandomWord()
     prepareDisplayedSecretWord()
     displayGameWord()
+    disableUsedLettersFromKeyboard()
 }
 function pickRandomWord(){
     let randomIndex = Math.floor(Math.random() * words.length);
@@ -89,9 +151,49 @@ function prepareDisplayedSecretWord(){
 
 }
 
+function wireKeyButtons(){
+    const allButtons = document.querySelectorAll('.keyButton')
+    allButtons.forEach(button => {
+        button.addEventListener('click', e => {
+            playLetter(button.id)
+        })
+    })
+}
 
+function disableUsedLettersFromKeyboard() {
+    document.querySelectorAll('.keyButton').forEach(button => {
+        if(displayedSecretWord.includes(button.id) || mistakenLetters.includes(button.id)){
+            button.disabled = true
+        }
+    })
+}
+function wrongLetter(mistakenLetter) {
+    errors++
+    checkForWinOrLost()
 
+    mistakenLetters.push(mistakenLetter)
+    disableUsedLettersFromKeyboard()
+    checkForWinOrLost()
+}
+function checkForWinOrLost() {
+    console.log('avant verif errors')
+    if(errors >= maxErrors){
+      return  gameOver()
+    }
+    console.log('apres verif errors')
 
+    if(displayedSecretWord === secretWord ){
+        console.log('victoire')
+
+      return  victory()
+    }
+}
+function gameOver(){
+    console.log('game over')
+}
+function victory(){
+    victoryDiv.style.display = "flex"
+}
 
 
 initGame()

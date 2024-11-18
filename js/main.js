@@ -7,7 +7,7 @@ const victoryDiv = document.querySelector(".victory")
 let secretWord
 let displayedSecretWord
 let mistakenLetters
-let maxErrors = 3
+let maxErrors = 6
 let errors
 console.log("DEBUT : ", displayedSecretWord)
 
@@ -69,6 +69,11 @@ function addLetterToWord(letterToAdd, indexes) {
 }
 
 function createKeyboard(){
+    document.querySelectorAll('.gameKeys>*').forEach(button => {
+        console.log(button)
+        button.remove()
+    })
+
     alphabetArray.forEach((letter) => {
         let newKey = document.createElement("button");
         newKey.classList.add('btn');
@@ -169,7 +174,7 @@ function disableUsedLettersFromKeyboard() {
 }
 function wrongLetter(mistakenLetter) {
     errors++
-    checkForWinOrLost()
+    document.querySelector('.pendu').innerHTML += "X"
 
     mistakenLetters.push(mistakenLetter)
     disableUsedLettersFromKeyboard()
@@ -178,7 +183,7 @@ function wrongLetter(mistakenLetter) {
 function checkForWinOrLost() {
     console.log('avant verif errors')
     if(errors >= maxErrors){
-      return  gameOver()
+      return gameOver()
     }
     console.log('apres verif errors')
 
@@ -189,11 +194,68 @@ function checkForWinOrLost() {
     }
 }
 function gameOver(){
-    console.log('game over')
+    let gameOverMessage = document.createElement('span')
+    gameOverMessage.classList.add('.gameOverMessage')
+    gameOverMessage.textContent = "Perdu ! Le mot était :"
+    document.querySelector('.gameDisplay').appendChild(gameOverMessage)
+    displayedWord.textContent = secretWord
+    let playAgainButton = document.createElement('button')
+    playAgainButton.classList.add('btn')
+    playAgainButton.classList.add('btn-primary')
+    playAgainButton.classList.add('btn-primary')
+    playAgainButton.classList.add('rejouer')
+    playAgainButton.innerHTML = "Rejouer"
+    document.querySelector('.gameDisplay').appendChild(playAgainButton)
+
+    document.querySelectorAll('.keyButton').forEach(button => {
+        button.disabled = true
+    })
+
+    document.querySelector('.rejouer').addEventListener('click', (e) => {
+      console.log('coucou')
+        playAgain();
+    })
 }
 function victory(){
     victoryDiv.style.display = "flex"
+    document.querySelector('.rejouer').addEventListener('click', e => {
+        playAgain();
+    })
+}
+function playAgain(){
+    initGame()
+    victoryDiv.style.display = "none"
 }
 
-
 initGame()
+
+/// DESSIN DU PENDU
+
+let canvasPendu = document.querySelector('.pendu')
+let dessin = canvasPendu.getContext('2d')
+
+
+//tete
+dessin.beginPath()
+dessin.strokeStyle = "#000"
+dessin.lineWidth = 2
+dessin.arc(70,30, 10, 0, Math.PI * 2, true)
+dessin.stroke()
+
+//corps
+dessin.moveTo(70, 40)
+dessin.lineTo(70,80)
+dessin.stroke()
+
+//bras
+
+dessin.moveTo(70, 50)
+dessin.lineTo(50,70)
+dessin.stroke()
+
+
+//autre bras
+dessin.moveTo(70, 50)
+dessin.lineTo(90,70)
+dessin.stroke()
+

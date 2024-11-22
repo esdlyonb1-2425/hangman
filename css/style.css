@@ -56,3 +56,25 @@
     font-weight: bolder;
     font-size: 3em;
 }
+.defeat{
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.54);
+    border : 4px solid orangered;
+    border-radius: 10%;
+    display: none;
+
+}
+.defeat>span{
+
+    color: white;
+    font-family: Poppins;
+    text-transform: uppercase;
+    font-weight: bolder;
+    font-size: 3em;
+}
